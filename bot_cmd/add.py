@@ -1,45 +1,41 @@
 from pyrogram import Client
 from pyrogram.types import Message
+from pyrogram.enums import ChatType
 from pyrogram.errors import RPCError
 
 command = "add"
 
 async def handler(client: Client, message: Message, args: str, settings: dict):
-    # Проверяем, что команда вызвана в группе/супергруппе
-    if message.chat.type not in ["group", "supergroup"]:
-        await message.reply("❌ Эта команда работает только в группах и супергруппах!")
+    # Проверка типа чата
+    if message.chat.type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        await message.reply("🚫 Команда доступна только в группах и супергруппах!")
         return
 
-    # Проверяем права бота
+    # Проверка прав администратора
     try:
         me = await client.get_chat_member(message.chat.id, "me")
-        if not me.can_invite_users:
-            await message.reply("❌ У меня нет прав на добавление участников!")
+        if not me.privileges or not me.privileges.can_invite_users:
+            await message.reply("🔒 У меня нет прав на добавление участников!")
             return
     except Exception as e:
-        await message.reply(f"⚠️ Ошибка проверки прав: {str(e)}")
+        await message.reply(f"⚠️ Ошибка проверки прав: {e}")
         return
 
-    # Получаем целевого пользователя
-    user = None
-    if message.reply_to_message:
-        user = message.reply_to_message.from_user
-    elif args:
-        try:
-            user = await client.get_users(args.strip('@'))
-        except:
-            await message.reply("❌ Пользователь не найден")
-            return
-    else:
-        await message.reply("❌ Укажите @username или ответьте на сообщение пользователя")
-        return
-
-    # Пытаемся добавить
+    # Получение цели
     try:
-        await client.unban_chat_member(
-            chat_id=message.chat.id,
-            user_id=user.id
-        )
-        await message.reply(f"✅ Пользователь {user.mention} был добавлен!")
+        if message.reply_to_message:
+            user = message.reply_to_message.from_user
+        elif args:
+            user = await client.get_users(args.strip('@'))
+        else:
+            await message.reply("ℹ️ Ответьте на сообщение или укажите @username")
+            return
+
+        # Добавление пользователя
+        await client.unban_chat_member(message.chat.id, user.id)
+        await message.reply(f"👋 {user.mention} был добавлен в чат!")
+        
+    except RPCError as e:
+        await message.reply(f"❌ Ошибка Telegram: {e}")
     except Exception as e:
-        await message.reply(f"⚠️ Не удалось добавить: {str(e)}")
+        await message.reply(f"⚠️ Ошибка: {e}")

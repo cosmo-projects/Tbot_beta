@@ -45,8 +45,8 @@ settings = load_settings()
 
 app = Client(
     "my_user_bot",
-    api_id=ВСТАВТЕ ЗНАЧЕНИЕ,
-    api_hash="ВСИАВТЕ ЗНАЧЕНИЕ"
+    api_id=21004939,
+    api_hash="05b2b4afbae9aecfd3dfd34893afff6f"
 )
 
 def load_commands():

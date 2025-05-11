@@ -6,7 +6,14 @@ command = "del"
 
 async def handler(client: Client, message: Message, args: str, settings: dict):
     if not message.reply_to_message:
-        await message.reply("❌ Ответьте на сообщение для удаления")
+        await message.reply("""
+         ╭───⋞⋅ SYSTEM INFO
+         │
+         ├─▶❗Произошла ошибка! 
+         ├─▶ ❌ Я что сам должен догадатся че удалить? 
+         │
+         ╰───⋞⋅ 💙Powered by Cosmo
+        """)
         return
 
     try:
@@ -14,6 +21,18 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
             message.chat.id,
             message.reply_to_message.id
         )
-        await message.reply("🗑️ Сообщение удалено!")
+        await message.reply("""
+        ╭───⋞⋅ SYSTEM INFO
+        ├─▶ 🗑️ Сообщение удалено !
+        ╰───⋞⋅ 💙Powered by Cosmo
+        """)
     except Exception as e:
-        await message.reply(f"⚠️ Ошибка: {str(e)}")
+        await message.reply(f"""
+        ╭───⋞⋅ SYSTEM INFO
+        │
+        ├─▶❗Произошла критическая ошибка! 
+        ├─▶ ⚠️ Ошибка: {str(e)}")
+        │
+        ╰───⋞⋅ 💙Powered by Cosmo 
+        """) 
+        

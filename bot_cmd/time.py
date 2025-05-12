@@ -18,13 +18,22 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
         time_str = current_time.strftime("%H:%M:%S")
 
         result = f"""
-⏳═════⋆⋅> TIME INFO  
-├─ 📅 Day: {day_of_week} 
-├─ 🗓 Date: {date} 
-├─ 🕰 Time: {time_str} 
-├─ 🌏 Timezone: {timezone_str}
-╰═════⋆⋅> Powered by Cosmo
-        """
+╭───⋞⏳ TIME INFO ⏳⋟───╮
+│
+├─▶ 📅 День недели: {day_of_week}
+├─▶ 🗓 Дата: {date}
+├─▶ 🕒 Время: {time_str}
+├─▶ 🌏 Временная зона: {timezone_str}
+│
+╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+"""
         await message.reply(result)
     except Exception as e:
-        await message.reply(f"⚠️ Error: {e}")
+        await message.reply(f"""
+╭───⋞⚙️ SYSTEM INFO ⚙️⋟───╮
+│
+├─▶ ❗ Произошла ошибка!
+├─▶ ⚠️ Error: {e}
+│
+╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+""")

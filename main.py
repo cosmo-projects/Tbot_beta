@@ -14,21 +14,37 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Префиксы команд
-COMMAND_PREFIXES = [".l", "azi", ".tlp"]
+COMMAND_PREFIXES = [".l", "azi", ".tlp", "!"]
 
 # Файл для хранения настроек
 SETTINGS_FILE = "conf.json"
 
+# Алиасы команд
+COMMAND_ALIASES = {
+    "delete": "del",
+    "remove": "del",
+    "d": "del",
+    "p": "pin",
+    "fix": "pin",
+    "timezone": "nast times",
+    "tz": "nast times",
+    "t": "time",
+    "clock": "time",
+    "speed": "ping",
+    "status": "ping"
+}
+
 def load_settings():
-    default_settings = {"time_timezone": "UTC+3"}
+    default_settings = {
+        "time_timezone": "UTC+3",
+        "aliases": COMMAND_ALIASES
+    }
     if os.path.exists(SETTINGS_FILE):
         try:
             with open(SETTINGS_FILE, "r") as f:
                 loaded_settings = json.load(f)
-                for key, value in default_settings.items():
-                    if key not in loaded_settings:
-                        loaded_settings[key] = value
-                return loaded_settings
+                # Объединяем с настройками по умолчанию
+                return {**default_settings, **loaded_settings}
         except Exception as e:
             logger.error(f"Failed to load settings: {e}")
             return default_settings
@@ -43,6 +59,9 @@ def save_settings(settings):
 
 settings = load_settings()
 
+# Создаём папку для модулей, если её нет
+os.makedirs("bot_cmd", exist_ok=True)
+
 app = Client(
     "my_user_bot",
     api_id=21004939,
@@ -51,10 +70,6 @@ app = Client(
 
 def load_commands():
     commands = {}
-    if not os.path.exists("bot_cmd"):
-        logger.warning("Directory 'bot_cmd' not found")
-        return commands
-    
     for filename in os.listdir("bot_cmd"):
         if filename.endswith(".py") and filename != "__init__.py":
             try:
@@ -69,14 +84,35 @@ def load_commands():
 
 commands = load_commands()
 
+def resolve_alias(command: str, args: str, settings: dict) -> tuple:
+    """Разрешает алиасы команд"""
+    aliases = settings.get("aliases", {})
+    
+    # Проверяем полную команду с аргументами
+    full_command = f"{command} {args}".strip()
+    if full_command in aliases:
+        new_cmd = aliases[full_command]
+        return new_cmd.split(maxsplit=1) if " " in new_cmd else (new_cmd, "")
+    
+    # Проверяем только команду
+    if command in aliases:
+        new_cmd = aliases[command]
+        return new_cmd.split(maxsplit=1) + [args] if " " in new_cmd else (new_cmd, args)
+    
+    return command, args
+
 @app.on_message(filters.private | filters.group)
 async def handle_commands(client: Client, message: Message):
     try:
         text = message.text or message.caption
-        if not text or not text.startswith(tuple(COMMAND_PREFIXES)):
+        if not text:
             return
 
-        prefix = next(p for p in COMMAND_PREFIXES if text.startswith(p))
+        # Проверяем все префиксы
+        prefix = next((p for p in COMMAND_PREFIXES if text.startswith(p)), None)
+        if not prefix:
+            return
+
         command_part = text[len(prefix):].strip()
         if not command_part:
             return
@@ -84,8 +120,11 @@ async def handle_commands(client: Client, message: Message):
         command = command_part.split()[0].lower()
         args = command_part[len(command):].strip()
 
+        # Обрабатываем алиасы
+        command, args = resolve_alias(command, args, settings)
+
         if command in commands:
-            logger.info(f"Executing: {command}")
+            logger.info(f"Executing: {command} (original: {text})")
             start_time = time.time()
             try:
                 await commands[command](client, message, args, settings)
@@ -103,5 +142,5 @@ async def handle_commands(client: Client, message: Message):
         logger.error(f"Unexpected error: {e}")
 
 if __name__ == "__main__":
-    logger.info("Starting bot...")
+    logger.info("Starting bot in Termux...")
     app.run()

@@ -19,12 +19,10 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 
         result = f"""
 ⏳═════⋆⋅> TIME INFO  
-│ 
-├─▶ Day: {day_of_week} 
-├─▶ Date: {date} 
-├─▶ Time: {time_str} 
-├─▶ Timezone: {timezone_str} 
-│ 
+├─ 📅 Day: {day_of_week} 
+├─ 🗓 Date: {date} 
+├─ 🕰 Time: {time_str} 
+├─ 🌏 Timezone: {timezone_str}
 ╰═════⋆⋅> Powered by Cosmo
         """
         await message.reply(result)

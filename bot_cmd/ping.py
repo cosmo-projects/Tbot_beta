@@ -13,19 +13,18 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
     current_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     
     result = f"""
-🚀╭───⋞⋅⚙️ SYSTEM STATUS ⚙️⋅⋟───╮
+╭───⋞⚙️ SYSTEM STATUS ⚙️⋟───╮
 │
-├─▶ PING: {(time.time() - start_time)*1000:.2f} ms
-├─▶ API: {api_ping:.2f} ms
-├─▶ Time: {current_time}
+├─▶ 🚀 PING: {(time.time() - start_time)*1000:.2f} ms
+├─▶ 📡 API: {api_ping:.2f} ms
+├─▶ 🕒 Time: {current_time}
 │
-├─◈ Python: {platform.python_version()}
-├─◈ Pyrogram: {pyrogram_version}
-├─◈ System: {platform.system()} {platform.release()}
+├─◈ 🐍 Python: {platform.python_version()}
+├─◈ 🔥 Pyrogram: {pyrogram_version}
+├─◈ 💻 System: {platform.system()} {platform.release()}
 │
-╰───⋞⋅🌌 Powered by Cosmo 🌌⋅⋟───╯
-    """
-    
+╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+"""
     await message.reply(result)
 
 async def get_telegram_api_ping(client: Client):

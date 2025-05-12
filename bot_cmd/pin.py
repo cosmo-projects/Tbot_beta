@@ -6,7 +6,12 @@ command = "pin"
 
 async def handler(client: Client, message: Message, args: str, settings: dict):
     if not message.reply_to_message:
-        await message.reply("❌ Ответьте на сообщение для закрепления")
+        await message.reply("""
+        ╭───⋞⋅ ⚙️SYSTEM INFO⚙️
+        ├─▶❗Произошла ошибка! 
+        ├─▶ ❌ Ответьте на сообщение для закрепления. 
+        ╰───⋞🌌⋅ Powered by Cosmo 🌌
+        """)
         return
 
     try:
@@ -15,6 +20,16 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
             message.reply_to_message.id,
             disable_notification=True
         )
-        await message.reply("📌 Сообщение закреплено!")
+        await message.reply("""
+        ╭───⋞⋅ ⚙️SYSTEM INFO⚙️ 
+        ├─▶❗Успешно ! 
+        ├─▶📌 Сообщение закреплено!. 
+        ╰───⋞⋅🌌 Powered by Cosmo 🌌
+        """)
     except Exception as e:
-        await message.reply(f"⚠️ Ошибка: {str(e)}")
+        await message.reply(f"""
+        ╭───⋞⋅ ⚙️ SYSTEM INFO ⚙️ 
+        ├─▶❗Произошла ошибка! 
+        ├─▶⚠️ Ошибка: {str(e)}")
+        ╰───⋞⋅🌌 Powered by Cosmo 🌌
+        

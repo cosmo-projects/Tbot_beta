@@ -13,7 +13,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
     current_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     
     result = f"""
-🚀 ╭───⋞⋅ SYSTEM STATUS ⋅⋟───╮
+🚀╭───⋞⋅⚙️ SYSTEM STATUS ⚙️⋅⋟───╮
 │
 ├─▶ PING: {(time.time() - start_time)*1000:.2f} ms
 ├─▶ API: {api_ping:.2f} ms
@@ -23,7 +23,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─◈ Pyrogram: {pyrogram_version}
 ├─◈ System: {platform.system()} {platform.release()}
 │
-╰───⋞⋅  Powered by Cosmo ⋅⋟───╯
+╰───⋞⋅🌌 Powered by Cosmo 🌌⋅⋟───╯
     """
     
     await message.reply(result)

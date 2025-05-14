@@ -70,7 +70,7 @@ app = Client(
 
 def load_commands():
     commands = {}
-    for filename in os.listdir("bot_cmd"):
+    for filename in os.listdir("plugin"):
         if filename.endswith(".py") and filename != "__init__.py":
             try:
                 module_name = filename[:-3]

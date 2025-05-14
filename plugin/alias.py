@@ -14,14 +14,14 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 │
 ├─▶ ℹ️ Алиасы не настроены
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
             return
 
         response = "╭───⋞⚙️ ALIAS LIST ⚙️⋟───╮\n│\n"
         for alias, target in aliases.items():
             response += f"├─▶ {alias} → {target}\n"
-        response += "│\n╰───⋞🌌 Powered by Cosmo 🌌⋟───╯"
+        response += "│\n╰───⋞🌌 Powered by Cosmo 🌌⋟"
         
         await message.reply(response)
         return
@@ -35,7 +35,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ .alias add <алиас> <команда>
 ├─▶ .alias del <алиас>
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         return
 
@@ -50,7 +50,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ❗ Укажите команду для алиаса
 ├─▶ ✅ Пример: .alias add d del
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
             return
 
@@ -63,7 +63,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ✅ Алиас добавлен:
 ├─▶ {alias} → {target}
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
 
     elif action == "del":
@@ -75,7 +75,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 │
 ├─▶ ✅ Алиас удалён: {alias}
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         else:
             await message.reply(f"""
@@ -83,7 +83,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 │
 ├─▶ ❗ Алиас не найден: {alias}
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
     else:
         await message.reply(f"""
@@ -92,5 +92,5 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ❗ Неизвестное действие: {action}
 ├─▶ Используйте add/del
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)

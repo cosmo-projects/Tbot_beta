@@ -11,7 +11,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 │
 ├─▶ ⚠️ Использование: .nast times UTC+3
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         return
 
@@ -23,7 +23,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ❗ Неверный формат команды
 ├─▶ ✅ Пример: .nast times UTC+3
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         return
 
@@ -37,7 +37,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ❗ Неверный формат временной зоны
 ├─▶ ⚠️ Формат: UTC±X (например, UTC+3, UTC-5)
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
             return
 
@@ -51,7 +51,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ❗ Недопустимое значение
 ├─▶ ⚠️ Смещение должно быть между -12 и +14
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
                 return
 
@@ -63,7 +63,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ✅ Временная зона успешно установлена
 ├─▶ 🕒 Текущая зона: {setting_value}
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         except ValueError:
             await message.reply("""
@@ -72,5 +72,5 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ❗ Неверный формат смещения
 ├─▶ ⚠️ Используйте UTC±X (например, UTC+3)
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)

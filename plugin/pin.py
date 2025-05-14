@@ -12,7 +12,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ❗ Произошла ошибка!
 ├─▶ ❌ Ответьте на сообщение для закрепления
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         return
 
@@ -27,7 +27,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 │
 ├─▶ 📌 Сообщение успешно закреплено!
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
     except Exception as e:
         await message.reply(f"""
@@ -36,5 +36,5 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ ❗ Произошла ошибка!
 ├─▶ ⚠️ Ошибка: {str(e)}
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)

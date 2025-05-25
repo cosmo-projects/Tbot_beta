@@ -1,17 +1,19 @@
-from pyrogram import Client
+ from pyrogram import Client
 from pyrogram.types import Message
 from main import save_settings
+from config_sist import COMMAND_PREFIXES
 
 command = "alias"
 
 async def handler(client: Client, message: Message, args: str, settings: dict):
     if not args:
-        # Показать все алиасы
         aliases = settings.get("aliases", {})
+        require_prefix = settings["alias_settings"].get("require_prefix", True)
+        
         if not aliases:
             await message.reply("""
 ╭───⋞⚙️ ALIAS INFO ⚙️⋟───╮
-├─▶ ℹ️ Алиасы не настроены
+├─▶ ℹ️ No aliases configured
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
             return
@@ -19,7 +21,9 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
         response = "╭───⋞⚙️ ALIAS LIST ⚙️⋟───╮\n│\n"
         for alias, target in aliases.items():
             response += f"├─▶ {alias} → {target}\n"
-        response += "│\n╰───⋞🌌 Powered by Cosmo 🌌⋟"
+        
+        response += f"│\n├─▶ {'🟢' if require_prefix else '🔴'} Prefixes: {'Required' if require_prefix else 'Not required'}\n"
+        response += "╰───⋞🌌 Powered by Cosmo 🌌⋟"
         
         await message.reply(response)
         return
@@ -28,32 +32,41 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
     if len(parts) < 2:
         await message.reply("""
 ╭───⋞⚙️ ALIAS USAGE ⚙️⋟───╮
-├─▶ ⚠️ Использование:
-├─▶ .alias add <алиас> <команда>
-├─▶ .alias del <алиас>
+├─▶ Usage:
+├─▶ .alias add <alias> <command>
+├─▶ .alias del <alias>
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         return
 
-    action = parts[0].lower()
-    alias = parts[1].lower()
+    action, alias = parts[0].lower(), parts[1]
+    require_prefix = settings["alias_settings"].get("require_prefix", True)
 
     if action == "add":
         if len(parts) < 3:
             await message.reply("""
 ╭───⋞⚙️ ALIAS ERROR ⚙️⋟───╮
-├─▶ ❗ Укажите команду для алиаса
-├─▶ ✅ Пример: .alias add d del
+├─▶ ❗ Specify target command
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
             return
 
         target = parts[2]
+        
+        if require_prefix and not any(alias.startswith(p) for p in COMMAND_PREFIXES):
+            await message.reply(f"""
+╭───⋞⚙️ ALIAS ERROR ⚙️⋟───╮
+├─▶ ❗ Alias must start with:
+├─▶ {', '.join(COMMAND_PREFIXES)}
+╰───⋞🌌 Powered by Cosmo 🌌⋟
+""")
+            return
+
         settings["aliases"][alias] = target
         save_settings(settings)
         await message.reply(f"""
 ╭───⋞⚙️ ALIAS ADDED ⚙️⋟───╮
-├─▶ ✅ Алиас добавлен:
+├─▶ ✅ Alias added:
 ├─▶ {alias} → {target}
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
@@ -64,19 +77,19 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
             save_settings(settings)
             await message.reply(f"""
 ╭───⋞⚙️ ALIAS REMOVED ⚙️⋟───╮
-├─▶ ✅ Алиас удалён: {alias}
+├─▶ ✅ Alias removed: {alias}
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         else:
             await message.reply(f"""
 ╭───⋞⚙️ ALIAS ERROR ⚙️⋟───╮
-├─▶ ❗ Алиас не найден: {alias}
+├─▶ ❗ Alias not found: {alias}
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
     else:
         await message.reply(f"""
 ╭───⋞⚙️ ALIAS ERROR ⚙️⋟───╮
-├─▶ ❗ Неизвестное действие: {action}
-├─▶ Используйте add/del
+├─▶ ❗ Unknown action: {action}
+├─▶ Use add/del
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)

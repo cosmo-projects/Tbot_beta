@@ -64,7 +64,7 @@ def load_commands():
         if filename.endswith(".py") and filename != "__init__.py":
             try:
                 module_name = filename[:-3]
-                module = __import__(f"bot_cmd.{module_name}", fromlist=[module_name])
+                module = __import__(f"plugin.{module_name}", fromlist=[module_name])
                 if hasattr(module, "command") and hasattr(module, "handler"):
                     commands[module.command] = module.handler
                     logger.info(f"Command '{module.command}' loaded")

@@ -31,9 +31,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
     except Exception as e:
         await message.reply(f"""
 ╭───⋞⚙️ SYSTEM INFO ⚙️⋟───╮
-│
 ├─▶ ❗ Произошла ошибка!
 ├─▶ ⚠️ Error: {e}
-│
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)

@@ -5,7 +5,7 @@ from pyrogram import Client
 from pyrogram.types import Message
 from pyrogram import __version__ as pyrogram_version
 
-command = "ping"
+command = "pinfo"
 
 async def handler(client: Client, message: Message, args: str, settings: dict):
     start_time = time.time()
@@ -13,17 +13,20 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
     current_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     
     result = f"""
-╭───⋞⚙️ SYSTEM STATUS ⚙️⋟───╮
+╭──⋞⚙️ SYSTEM INFO ⚙️⋟───╮
 │
 ├─▶ 🚀 PING: {(time.time() - start_time)*1000:.2f} ms
 ├─▶ 📡 API: {api_ping:.2f} ms
 ├─▶ 🕒 Time: {current_time}
+├─▶ ❗ P.S. Время примерное. 
+│
+├─▶ 📱 Versions: 0.0.2
 │
 ├─◈ 🐍 Python: {platform.python_version()}
 ├─◈ 🔥 Pyrogram: {pyrogram_version}
 ├─◈ 💻 System: {platform.system()} {platform.release()}
 │
-╰───⋞🌌 Powered by Cosmo 🌌⋟───╯
+╰──⋞🌌 Powered by Cosmo 🌌⋟
 """
     await message.reply(result)
 

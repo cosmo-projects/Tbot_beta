@@ -5,6 +5,7 @@ import json
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.errors import PeerIdInvalid, ChannelInvalid
+from config_sist import COMMAND_PREFIXES, DEFAULT_SETTINGS
 
 # Настройка логирования
 logging.basicConfig(
@@ -13,32 +14,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Префиксы команд
-COMMAND_PREFIXES = [".l", "azi", ".tlp", "!"]
-
 # Файл для хранения настроек
 SETTINGS_FILE = "conf.json"
 
-# Алиасы команд
-COMMAND_ALIASES = {
-    "fix": "pin"
-}
-
 def load_settings():
-    default_settings = {
-        "time_timezone": "UTC+3",
-        "aliases": COMMAND_ALIASES
-    }
     if os.path.exists(SETTINGS_FILE):
         try:
             with open(SETTINGS_FILE, "r") as f:
                 loaded_settings = json.load(f)
-                # Объединяем с настройками по умолчанию
-                return {**default_settings, **loaded_settings}
+                return {**DEFAULT_SETTINGS, **loaded_settings}
         except Exception as e:
             logger.error(f"Failed to load settings: {e}")
-            return default_settings
-    return default_settings
+            return DEFAULT_SETTINGS
+    return DEFAULT_SETTINGS
 
 def save_settings(settings):
     try:
@@ -49,8 +37,8 @@ def save_settings(settings):
 
 settings = load_settings()
 
-# Создаём папку для модулей, если её нет
-os.makedirs("bot_cmd", exist_ok=True)
+# Создаём папку для плагинов
+os.makedirs("plugin", exist_ok=True)
 
 app = Client(
     "my_user_bot",
@@ -67,7 +55,7 @@ def load_commands():
                 module = __import__(f"plugin.{module_name}", fromlist=[module_name])
                 if hasattr(module, "command") and hasattr(module, "handler"):
                     commands[module.command] = module.handler
-                    logger.info(f"Command '{module.command}' loaded")
+                    logger.info(f"Command '{module.command}' loaded from {filename}")
             except Exception as e:
                 logger.error(f"Failed to load command {filename}: {e}")
     return commands
@@ -75,19 +63,28 @@ def load_commands():
 commands = load_commands()
 
 def resolve_alias(command: str, args: str, settings: dict) -> tuple:
-    """Разрешает алиасы команд"""
+    """Разрешает алиасы команд с учетом префиксов"""
     aliases = settings.get("aliases", {})
+    alias_settings = settings.get("alias_settings", {})
+    require_prefix = alias_settings.get("require_prefix", True)
     
-    # Проверяем полную команду с аргументами
     full_command = f"{command} {args}".strip()
-    if full_command in aliases:
-        new_cmd = aliases[full_command]
-        return new_cmd.split(maxsplit=1) if " " in new_cmd else (new_cmd, "")
     
-    # Проверяем только команду
-    if command in aliases:
-        new_cmd = aliases[command]
-        return new_cmd.split(maxsplit=1) + [args] if " " in new_cmd else (new_cmd, args)
+    if require_prefix:
+        for prefix in COMMAND_PREFIXES:
+            prefixed_cmd = f"{prefix}{full_command}"
+            if prefixed_cmd in aliases:
+                new_cmd = aliases[prefixed_cmd]
+                return new_cmd.split(maxsplit=1) if " " in new_cmd else (new_cmd, "")
+    
+    if not require_prefix:
+        if full_command in aliases:
+            new_cmd = aliases[full_command]
+            return new_cmd.split(maxsplit=1) if " " in new_cmd else (new_cmd, "")
+        
+        if command in aliases:
+            new_cmd = aliases[command]
+            return new_cmd.split(maxsplit=1) + [args] if " " in new_cmd else (new_cmd, args)
     
     return command, args
 
@@ -98,7 +95,6 @@ async def handle_commands(client: Client, message: Message):
         if not text:
             return
 
-        # Проверяем все префиксы
         prefix = next((p for p in COMMAND_PREFIXES if text.startswith(p)), None)
         if not prefix:
             return
@@ -110,7 +106,6 @@ async def handle_commands(client: Client, message: Message):
         command = command_part.split()[0].lower()
         args = command_part[len(command):].strip()
 
-        # Обрабатываем алиасы
         command, args = resolve_alias(command, args, settings)
 
         if command in commands:
@@ -132,5 +127,5 @@ async def handle_commands(client: Client, message: Message):
         logger.error(f"Unexpected error: {e}")
 
 if __name__ == "__main__":
-    logger.info("Starting bot in Termux...")
+    logger.info("Starting bot...")
     app.run()

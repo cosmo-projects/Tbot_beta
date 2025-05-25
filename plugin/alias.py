@@ -11,9 +11,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
         if not aliases:
             await message.reply("""
 ╭───⋞⚙️ ALIAS INFO ⚙️⋟───╮
-│
 ├─▶ ℹ️ Алиасы не настроены
-│
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
             return
@@ -30,11 +28,9 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
     if len(parts) < 2:
         await message.reply("""
 ╭───⋞⚙️ ALIAS USAGE ⚙️⋟───╮
-│
 ├─▶ ⚠️ Использование:
 ├─▶ .alias add <алиас> <команда>
 ├─▶ .alias del <алиас>
-│
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         return
@@ -46,10 +42,8 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
         if len(parts) < 3:
             await message.reply("""
 ╭───⋞⚙️ ALIAS ERROR ⚙️⋟───╮
-│
 ├─▶ ❗ Укажите команду для алиаса
 ├─▶ ✅ Пример: .alias add d del
-│
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
             return
@@ -59,10 +53,8 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
         save_settings(settings)
         await message.reply(f"""
 ╭───⋞⚙️ ALIAS ADDED ⚙️⋟───╮
-│
 ├─▶ ✅ Алиас добавлен:
 ├─▶ {alias} → {target}
-│
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
 
@@ -72,25 +64,19 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
             save_settings(settings)
             await message.reply(f"""
 ╭───⋞⚙️ ALIAS REMOVED ⚙️⋟───╮
-│
 ├─▶ ✅ Алиас удалён: {alias}
-│
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
         else:
             await message.reply(f"""
 ╭───⋞⚙️ ALIAS ERROR ⚙️⋟───╮
-│
 ├─▶ ❗ Алиас не найден: {alias}
-│
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)
     else:
         await message.reply(f"""
 ╭───⋞⚙️ ALIAS ERROR ⚙️⋟───╮
-│
 ├─▶ ❗ Неизвестное действие: {action}
 ├─▶ Используйте add/del
-│
 ╰───⋞🌌 Powered by Cosmo 🌌⋟
 """)

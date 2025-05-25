@@ -21,17 +21,7 @@ SETTINGS_FILE = "conf.json"
 
 # Алиасы команд
 COMMAND_ALIASES = {
-    "delete": "del",
-    "remove": "del",
-    "d": "del",
-    "p": "pin",
-    "fix": "pin",
-    "timezone": "nast times",
-    "tz": "nast times",
-    "t": "time",
-    "clock": "time",
-    "speed": "ping",
-    "status": "ping"
+    "fix": "pin"
 }
 
 def load_settings():

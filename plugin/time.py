@@ -7,8 +7,29 @@ command = "time"
 async def handler(client: Client, message: Message, args: str, settings: dict):
     try:
         timezone_str = settings.get("time_timezone", "UTC+3")
+        
+        # Проверка формата часового пояса
+        if not timezone_str.startswith("UTC") or len(timezone_str) < 4:
+            await message.reply("""
+╭───⋞⚙️ SYSTEM ERROR ⚙️⋟───╮
+├─▶ ❗ Неверный формат часового пояса!
+├─▶ ⚠️ Используйте настройку .nast time
+╰───⋞🌌 Powered by Cosmo 🌌⋟
+""")
+            return
+
         offset_str = timezone_str[3:]
-        offset_hours = float(offset_str)
+        try:
+            offset_hours = float(offset_str)
+        except ValueError:
+            await message.reply("""
+╭───⋞⚙️ SYSTEM ERROR ⚙️⋟───╮
+├─▶ ❗ Ошибка в значении смещения!
+├─▶ ⚠️ Используйте настройку .nast time
+╰───⋞🌌 Powered by Cosmo 🌌⋟
+""")
+            return
+            
         offset = timedelta(hours=offset_hours)
         custom_timezone = timezone(offset)
 
@@ -30,7 +51,7 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
         await message.reply(result)
     except Exception as e:
         await message.reply(f"""
-╭───⋞⚙️ SYSTEM INFO ⚙️⋟───╮
+╭───⋞⚙️ SYSTEM ERROR ⚙️⋟───╮
 ├─▶ ❗ Произошла ошибка!
 ├─▶ ⚠️ Error: {e}
 ╰───⋞🌌 Powered by Cosmo 🌌⋟

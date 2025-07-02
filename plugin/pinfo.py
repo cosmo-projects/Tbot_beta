@@ -20,7 +20,8 @@ async def handler(client: Client, message: Message, args: str, settings: dict):
 ├─▶ 🕒 Time: {current_time}
 ├─▶ ❗ P.S. Время примерное. 
 │
-├─▶ 📱 Versions: TESTERS
+├─▶ 📱 Versions: BETA_TEST
+├─▶ ❗Версия для теста обновлений/эксперементов. 
 │
 ├─◈ 🐍 Python: {platform.python_version()}
 ├─◈ 🔥 Pyrogram: {pyrogram_version}

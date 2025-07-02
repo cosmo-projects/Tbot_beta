@@ -37,17 +37,29 @@ def save_settings(settings):
 
 settings = load_settings()
 
-# Создаём папку для плагинов
+# Отключение логирования в консоль если нужно
+if not settings.get("console_logging", True):
+    logging.getLogger().handlers = []
+    logger.info("Console logging disabled")
+
+# Создаём папки для плагинов
 os.makedirs("plugin", exist_ok=True)
+os.makedirs("plugin_sist", exist_ok=True)
 
 app = Client(
     "my_user_bot",
     api_id=21004939,
-    api_hash="05b2b4afbae9aecfd3dfd34893afff6f"
+    api_hash="05b2b4afbae9aecfd3dfd34893afff6f",
+    workers=4,
+    sleep_threshold=60,
+    max_concurrent_transmissions=100,
+    retry_delay=3,
+    timeout=300
 )
 
 def load_commands():
     commands = {}
+    # Загрузка из plugin
     for filename in os.listdir("plugin"):
         if filename.endswith(".py") and filename != "__init__.py":
             try:
@@ -55,38 +67,24 @@ def load_commands():
                 module = __import__(f"plugin.{module_name}", fromlist=[module_name])
                 if hasattr(module, "command") and hasattr(module, "handler"):
                     commands[module.command] = module.handler
-                    logger.info(f"Command '{module.command}' loaded from {filename}")
+                    logger.info(f"Command '{module.command}' loaded from plugin/{filename}")
             except Exception as e:
-                logger.error(f"Failed to load command {filename}: {e}")
+                logger.error(f"Failed to load command plugin/{filename}: {e}")
+    
+    # Загрузка из plugin_sist
+    for filename in os.listdir("plugin_sist"):
+        if filename.endswith(".py") and filename != "__init__.py":
+            try:
+                module_name = filename[:-3]
+                module = __import__(f"plugin_sist.{module_name}", fromlist=[module_name])
+                if hasattr(module, "command") and hasattr(module, "handler"):
+                    commands[module.command] = module.handler
+                    logger.info(f"System command '{module.command}' loaded from plugin_sist/{filename}")
+            except Exception as e:
+                logger.error(f"Failed to load system command plugin_sist/{filename}: {e}")
     return commands
 
 commands = load_commands()
-
-def resolve_alias(command: str, args: str, settings: dict) -> tuple:
-    """Разрешает алиасы команд с учетом префиксов"""
-    aliases = settings.get("aliases", {})
-    alias_settings = settings.get("alias_settings", {})
-    require_prefix = alias_settings.get("require_prefix", True)
-    
-    full_command = f"{command} {args}".strip()
-    
-    if require_prefix:
-        for prefix in COMMAND_PREFIXES:
-            prefixed_cmd = f"{prefix}{full_command}"
-            if prefixed_cmd in aliases:
-                new_cmd = aliases[prefixed_cmd]
-                return new_cmd.split(maxsplit=1) if " " in new_cmd else (new_cmd, "")
-    
-    if not require_prefix:
-        if full_command in aliases:
-            new_cmd = aliases[full_command]
-            return new_cmd.split(maxsplit=1) if " " in new_cmd else (new_cmd, "")
-        
-        if command in aliases:
-            new_cmd = aliases[command]
-            return new_cmd.split(maxsplit=1) + [args] if " " in new_cmd else (new_cmd, args)
-    
-    return command, args
 
 @app.on_message(filters.private | filters.group)
 async def handle_commands(client: Client, message: Message):
@@ -106,20 +104,28 @@ async def handle_commands(client: Client, message: Message):
         command = command_part.split()[0].lower()
         args = command_part[len(command):].strip()
 
-        command, args = resolve_alias(command, args, settings)
-
         if command in commands:
-            logger.info(f"Executing: {command} (original: {text})")
+            logger.info(f"Executing: {command}")
             start_time = time.time()
             try:
                 await commands[command](client, message, args, settings)
                 logger.info(f"Command '{command}' executed in {time.time() - start_time:.2f}s")
             except Exception as e:
                 logger.error(f"Error in {command}: {e}")
-                await message.reply(f"⚠️ Error: {e}")
+                await message.reply(f"""
+╭───⋞⚙️ SYSTEM ERROR ⚙️⋟───╮
+├─▶ ❗ Ошибка выполнения!
+├─▶ 🐞 {str(e)}
+╰───⋞🌌 Powered by Cosmo 🌌⋟
+""")
         else:
             logger.warning(f"Unknown command: {command}")
-            await message.reply("❌ Unknown command")
+            await message.reply(f"""
+╭───⋞⚙️ SYSTEM INFO ⚙️⋟───╮
+├─▶ ❗ Неизвестная команда!
+├─▶ 🔍 {command}
+╰───⋞🌌 Powered by Cosmo 🌌⋟
+""")
 
     except (PeerIdInvalid, ChannelInvalid) as e:
         logger.warning(f"Invalid peer/channel: {e}")

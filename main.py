@@ -10,6 +10,13 @@ from pyrogram.types import Message
 from pyrogram.errors import PeerIdInvalid, ChannelInvalid
 from config_sist import COMMAND_PREFIXES, DEFAULT_SETTINGS
 
+# Проверка и установка TgCrypto
+try:
+    import TgCrypto
+except ImportError:
+    print(f"\n{Fore.YELLOW}⚠️ TgCrypto не установлен! Производительность будет ниже.")
+    print(f"{Fore.CYAN}Установите его командой: {Style.BRIGHT}{Fore.GREEN}pip install TgCrypto{Style.RESET_ALL}\n")
+
 # Инициализация colorama
 init(autoreset=True)
 
@@ -192,16 +199,13 @@ if __name__ == "__main__":
     os.makedirs("plugin", exist_ok=True)
     os.makedirs("plugin_sist", exist_ok=True)
     
-    # Создаем клиент Pyrogram
+    # Создаем клиент Pyrogram (исправленная версия без недопустимых параметров)
     app = Client(
         "cosmo_ub",
         api_id=api_id,
         api_hash=api_hash,
         workers=4,
-        sleep_threshold=60,
-        max_concurrent_transmissions=100,
-        retry_delay=3,
-        timeout=300
+        sleep_threshold=60
     )
     
     # Загрузка команд

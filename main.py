@@ -201,12 +201,19 @@ if __name__ == "__main__":
     
     # Создаем клиент Pyrogram (исправленная версия без недопустимых параметров)
     app = Client(
-        "cosmo_ub",
-        api_id=api_id,
-        api_hash=api_hash,
-        workers=4,
-        sleep_threshold=60
-    )
+    "cosmo_ub",
+    api_id=api_id,
+    api_hash=api_hash,
+    workers=2,  # Уменьшаем количество workers для мобильных устройств
+    sleep_threshold=30,  # Более агрессивный таймаут
+    no_updates=True,  # Отключаем получение обновлений для экономии трафика
+    ipv6=False,  # Принудительно используем IPv4
+    proxy=None,  # Явно отключаем прокси, если не используется
+    test_mode=False,  # Режим продакшена
+    app_version="Cosmo UB 2.0",
+    device_model="Termux",
+    system_version="Android"
+)
     
     # Загрузка команд
     commands = load_commands()

@@ -1,4 +1,4 @@
- from pyrogram import Client
+from pyrogram import Client
 from pyrogram.types import Message
 from main import save_settings
 from config_sist import COMMAND_PREFIXES
